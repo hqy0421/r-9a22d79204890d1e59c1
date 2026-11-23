@@ -1,0 +1,18 @@
+{
+    "parser_settings": {
+        "version": "omni.2.1",
+        "file_format_type": "json",
+        "ancestor_fields": [
+            { "name": "batch_id", "xpath": "../../batch_id", "required": true },
+            { "name": "site", "xpath": "../../site" }
+        ]
+    },
+    "transform_declarations": {
+        "FINAL_OUTPUT": { "xpath": "/batches/*/items/*", "object": {
+            "batch_id": { "xpath": "__ancestors/batch_id" },
+            "site": { "xpath": "__ancestors/site" },
+            "sku": { "xpath": "sku" },
+            "qty": { "xpath": "qty", "type": "int" }
+        }}
+    }
+}

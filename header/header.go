@@ -7,6 +7,18 @@ import (
 	"golang.org/x/text/encoding/charmap"
 )
 
+// AncestorField declares a field on the ancestor chain of each streamed record that should be
+// carried onto the record itself. It is only honored by `file_format_type: "json"`; see
+// idr.AncestorField and doc/json_xml_in_depth.md for the exact contract.
+type AncestorField struct {
+	// Name is the name of the field in the record's `__ancestors` node.
+	Name string `json:"name,omitempty"`
+	// XPath is evaluated with the record node as the context node.
+	XPath string `json:"xpath,omitempty"`
+	// Required makes a missing/not-yet-decoded ancestor field a fatal reader error.
+	Required bool `json:"required,omitempty"`
+}
+
 // ParserSettings defines the common header (and its JSON format) for all schemas across all schema handlers.
 // It contains vital information about which handler a schema wants to use, and what file format the input
 // stream is of (e.g. fixed-length txt, CSV/TSV, XML, JSON, EDI, etc). Optionally, it specifies the expected
@@ -17,6 +29,9 @@ type ParserSettings struct {
 	FileFormatType string  `json:"file_format_type,omitempty"`
 	Encoding       *string `json:"encoding,omitempty"`
 	Debug          int     `json:"debug,omitempty"`
+	// AncestorFields carries declared ancestor fields onto each streamed record. Only
+	// 'file_format_type: "json"' honors this setting.
+	AncestorFields []AncestorField `json:"ancestor_fields,omitempty"`
 }
 
 const (

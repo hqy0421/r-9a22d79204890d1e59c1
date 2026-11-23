@@ -103,6 +103,10 @@ This is the common part of all omniparser schemas, the header `parser_settings`:
 (Note, `"csv2"` has replaced the deprecated `"csv"` schema, see more details in
 [CSV Schema in Depth](./csv2_in_depth.md).)
 
+`parser_settings` also carries a few optional, format specific settings, such as `"debug"` for `csv2`
+(see [CSV2 Schema in Depth](./csv2_in_depth.md#debug-info)) and `"ancestor_fields"` for `json` (see
+[JSON/XML Schema in Depth](./json_xml_in_depth.md#ancestor-fields-in-streamed-json-records)).
+
 It's self-explanatory. Now let's run the CLI again:
 ```
 $ ~/dev/jf-tech/omniparser/cli.sh transform -i input.csv -s schema.json

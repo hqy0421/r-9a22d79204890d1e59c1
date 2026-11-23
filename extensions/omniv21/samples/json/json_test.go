@@ -70,3 +70,8 @@ func Benchmark2_Multiple_Objects(b *testing.B) {
 		}
 	}
 }
+
+func Test4_AncestorFields(t *testing.T) {
+	cupaloy.SnapshotT(t, jsons.BPJ(samples.SampleTestCommon(t,
+		"./4_ancestor_fields.schema.json", "./4_ancestor_fields.input.json")))
+}

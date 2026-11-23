@@ -1,0 +1,28 @@
+{
+    "batches": [
+        {
+            "batch_id": "B-1001",
+            "site": "warehouse-east",
+            "items": [
+                {
+                    "sku": "SKU-1",
+                    "qty": 3
+                },
+                {
+                    "sku": "SKU-2",
+                    "qty": 5
+                }
+            ]
+        },
+        {
+            "batch_id": "B-1002",
+            "site": "warehouse-west",
+            "items": [
+                {
+                    "sku": "SKU-3",
+                    "qty": 1
+                }
+            ]
+        }
+    ]
+}

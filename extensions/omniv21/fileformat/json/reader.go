@@ -58,9 +58,12 @@ func (r *reader) fmtErrStr(format string, args ...interface{}) string {
 	return fmt.Sprintf("input '%s' before/near line %d: %s", r.inputName, r.r.AtLine(), fmt.Sprintf(format, args...))
 }
 
-// NewReader creates an FormatReader for JSON file format.
-func NewReader(inputName string, src io.Reader, xpath string) (*reader, error) {
-	sp, err := idr.NewJSONStreamReader(src, xpath)
+// NewReader creates an FormatReader for JSON file format. The optional ancestorFields
+// declare fields on the ancestor chain of each streamed record to be carried onto the
+// record itself; see idr.AncestorField.
+func NewReader(
+	inputName string, src io.Reader, xpath string, ancestorFields ...idr.AncestorField) (*reader, error) {
+	sp, err := idr.NewJSONStreamReader(src, xpath, ancestorFields...)
 	if err != nil {
 		return nil, err
 	}

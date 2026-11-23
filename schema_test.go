@@ -1,6 +1,7 @@
 package omniparser
 
 import (
+	"bytes"
 	"errors"
 	"io"
 	"strings"
@@ -164,4 +165,72 @@ func TestSchema_NewTransform_NameAndCtxAwareErrOverwrite(t *testing.T) {
 
 	assert.Equal(t, h, s.Header())
 	assert.Equal(t, "test schema content", string(s.Content()))
+}
+
+func TestSchema_AncestorFields_EndToEnd(t *testing.T) {
+	schema := []byte(`{
+		"parser_settings": {
+			"version": "omni.2.1",
+			"file_format_type": "json",
+			"ancestor_fields": [
+				{ "name": "batch_id", "xpath": "../../batch_id", "required": true }
+			]
+		},
+		"transform_declarations": {
+			"FINAL_OUTPUT": { "xpath": "/batches/*/items/*", "object": {
+				"batch_id": { "xpath": "__ancestors/batch_id" },
+				"sku": { "xpath": "sku" },
+				"qty": { "xpath": "qty", "type": "int" }
+			}}
+		}
+	}`)
+	input := `{"batches":[
+		{"batch_id":"B1","items":[{"sku":"A","qty":1},{"sku":"B","qty":2}]},
+		{"batch_id":"B2","items":[{"sku":"C","qty":3}]}]}`
+	s, err := NewSchema("test-schema", bytes.NewReader(schema))
+	assert.NoError(t, err)
+	tr, err := s.NewTransform("test-input", bytes.NewReader([]byte(input)), &transformctx.Ctx{})
+	assert.NoError(t, err)
+	var got []string
+	for {
+		b, err := tr.Read()
+		if err == io.EOF {
+			break
+		}
+		assert.NoError(t, err)
+		got = append(got, string(b))
+	}
+	assert.Equal(t, []string{
+		`{"batch_id":"B1","qty":1,"sku":"A"}`,
+		`{"batch_id":"B1","qty":2,"sku":"B"}`,
+		`{"batch_id":"B2","qty":3,"sku":"C"}`,
+	}, got)
+}
+
+func TestSchema_AncestorFields_RequiredFieldNotYetDecoded(t *testing.T) {
+	schema := []byte(`{
+		"parser_settings": {
+			"version": "omni.2.1",
+			"file_format_type": "json",
+			"ancestor_fields": [
+				{ "name": "batch_id", "xpath": "../../batch_id", "required": true }
+			]
+		},
+		"transform_declarations": {
+			"FINAL_OUTPUT": { "xpath": "/batches/*/items/*", "object": {
+				"batch_id": { "xpath": "__ancestors/batch_id" }
+			}}
+		}
+	}`)
+	// 'batch_id' comes after 'items', so it can't be carried onto the items.
+	input := `{"batches":[{"items":[{"sku":"A"}],"batch_id":"B1"}]}`
+	s, err := NewSchema("test-schema", bytes.NewReader(schema))
+	assert.NoError(t, err)
+	tr, err := s.NewTransform("test-input", bytes.NewReader([]byte(input)), &transformctx.Ctx{})
+	assert.NoError(t, err)
+	_, err = tr.Read()
+	assert.Error(t, err)
+	assert.Equal(t,
+		`input 'test-input' before/near line 1: required ancestor field 'batch_id' (xpath: '../../batch_id') not found or not yet decoded`,
+		err.Error())
 }

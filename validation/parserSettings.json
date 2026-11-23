@@ -13,7 +13,21 @@
                     "type": "string",
                     "enum": [ "utf-8", "iso-8859-1", "windows-1252" ]
                 },
-                "debug": { "type": "integer", "minimum": 0 }
+                "debug": { "type": "integer", "minimum": 0 },
+                "ancestor_fields": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": { "type": "string", "minLength": 1 },
+                            "xpath": { "type": "string", "minLength": 1 },
+                            "required": { "type": "boolean" }
+                        },
+                        "required": [ "name", "xpath" ],
+                        "additionalProperties": false
+                    },
+                    "$comment": "Only honored by file_format_type 'json'."
+                }
             },
             "required": [ "version", "file_format_type" ],
             "additionalProperties": false

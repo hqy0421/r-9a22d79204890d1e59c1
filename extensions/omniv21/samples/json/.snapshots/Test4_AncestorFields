@@ -1,0 +1,32 @@
+[
+	{
+		"RawRecord": "{\"__ancestors\":{\"batch_id\":\"B-1001\",\"site\":\"warehouse-east\"},\"qty\":3,\"sku\":\"SKU-1\"}",
+		"RawRecordHash": "1679da48-cba2-365e-95a2-d89abcc30369",
+		"TransformedRecord": {
+			"batch_id": "B-1001",
+			"qty": 3,
+			"site": "warehouse-east",
+			"sku": "SKU-1"
+		}
+	},
+	{
+		"RawRecord": "{\"__ancestors\":{\"batch_id\":\"B-1001\",\"site\":\"warehouse-east\"},\"qty\":5,\"sku\":\"SKU-2\"}",
+		"RawRecordHash": "4375a296-0c29-36d0-b75d-94ba1741af4b",
+		"TransformedRecord": {
+			"batch_id": "B-1001",
+			"qty": 5,
+			"site": "warehouse-east",
+			"sku": "SKU-2"
+		}
+	},
+	{
+		"RawRecord": "{\"__ancestors\":{\"batch_id\":\"B-1002\",\"site\":\"warehouse-west\"},\"qty\":1,\"sku\":\"SKU-3\"}",
+		"RawRecordHash": "623355c6-2216-3a2d-bbca-0d6ffc725fe1",
+		"TransformedRecord": {
+			"batch_id": "B-1002",
+			"qty": 1,
+			"site": "warehouse-west",
+			"sku": "SKU-3"
+		}
+	}
+]

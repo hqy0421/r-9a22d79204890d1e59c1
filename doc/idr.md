@@ -155,6 +155,28 @@ flag is `JSONProp|JSONArr`, indicating `items` is a property of array value.
 Similar to XML case, values (string/number/boolean/null) are added as `TextNode` and anchored below its
 corresponding `ElementNode` parent.
 
+### Streamed JSON records and ancestor fields
+
+For JSON, `FINAL_OUTPUT.xpath` selects the record nodes; the JSON streaming reader yields one such node
+(and its subtree) at a time without materializing the containing arrays. When
+`parser_settings.ancestor_fields` declares fields from the record's ancestor chain, the reader appends a
+`__ancestors` element node to each yielded record node, with one child per declared field, holding a copy
+of the resolved ancestor data. Using the sample above with `FINAL_OUTPUT.xpath` set to the `items` array
+elements and an ancestor field declaration for `order_id`:
+
+```
+Node(Type: ElementNode, Data: "", FormatSpecific: JSONObj)        <-- streamed record
+    Node(Type: ElementNode, Data: "number_purchased", FormatSpecific: JSONProp)
+        Node(Type: TextNode, Data: "5", FormatSpecific: JSONValueNum)
+    Node(Type: ElementNode, Data: "__ancestors", FormatSpecific: JSONObj)   <-- added by ancestor_fields
+        Node(Type: ElementNode, Data: "order_id", FormatSpecific: JSONProp)
+            Node(Type: TextNode, Data: "1234567", FormatSpecific: JSONValueStr)
+```
+
+The values can then be extracted with `__ancestors/order_id`. See
+[JSON/XML Schema in Depth](./json_xml_in_depth.md#ancestor-fields-in-streamed-json-records) for the
+declaration format and the exact missing/changed-location contract.
+
 ## CSV (aka delimited)
 
 Here is a sample CSV (adapted from [this sample](../extensions/omniv21/samples/csv2/1_single_row.input.csv)):
